@@ -10,7 +10,6 @@ __author__ = "Alexander Kamyanskiy"
 import argparse
 from utils import calc_statistic, save_report
 
-# logname = '003.in'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
