@@ -1,6 +1,5 @@
 import unittest
 from utils import percentile as my_percentile
-from numpy import percentile as numpy_percentile
 
 
 class TestPercentile(unittest.TestCase):
@@ -19,9 +18,10 @@ class TestPercentile(unittest.TestCase):
                          1390950162536865,
                          1390950162890134]
 
+        self.work_time = [self.sequence[-1] - self.sequence[0]]
 
     def test_my_percentile_is_equal_to_numpy_percentile(self):
         self.assertEqual(
-            my_percentile(self.sequence, .95),
-            numpy_percentile(self.sequence, 95)
+            my_percentile(self.work_time, .95),
+            2081998
         )

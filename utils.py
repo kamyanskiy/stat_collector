@@ -37,12 +37,10 @@ def calc_statistic(logname):
                 "start_merge": None,
                 "start_send_result": None,
                 "finish_request": None,
-                "percentile": None,
                 "response_time_to_client": None,
+                "process_time": []
                 }
-        time_sequence = list(gen_timestamps_by_frontend_id(get_log(logname),
-                                                           fid))
-        stat["percentile"] = int(percentile(time_sequence, .95))
+
         for ev in gen_filter_by_frontend_id(get_log(logname), fid):
             if ev['event_type'] == 'StartRequest':
                 stat['start_request'] = ev['event_time']
@@ -77,6 +75,9 @@ def calc_statistic(logname):
 
         stat['response_time_to_client'] = \
             stat['finish_request'] - stat['start_send_result']
+
+        stat['process_time'].append(
+            int(stat['finish_request'] - stat['start_request']))
 
         connect_repl_groups = set(
             (i.replica_group for i in stat['backend_connect']))
@@ -115,12 +116,12 @@ def calc_statistic(logname):
 
             backend_stat[rg]["errors"] = errors.get(rg)
 
-        total_stat["frontend_stat"][fid] = {"response_time_to_client": stat[
-            "response_time_to_client"],
-                           "percentile": stat["percentile"],
-                           "groups_not_answered": len(repl_groups_not_answered),
-                           "backend_stat": backend_stat,
-                           }
+        total_stat["frontend_stat"][fid] = {
+            "response_time_to_client": stat["response_time_to_client"],
+            "percentile": percentile(stat["process_time"], .95),
+            "groups_not_answered": len(repl_groups_not_answered),
+            "backend_stat": backend_stat,
+        }
 
         del stat
 
