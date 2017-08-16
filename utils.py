@@ -130,8 +130,7 @@ def calc_statistic(logname):
     return total_stat
 
 def save_report(total_stat, out_filename):
-    with io.open("{}.out".format(out_filename), "w",
-                 encoding="utf-8") as f:
+    with io.open(out_filename, "w", encoding="utf-8") as f:
         ten_long_responses = u"10 идентификаторов фронтендов, для которых " \
                              u"фаза отправки запроса была максимальной: {}\n" \
                              u"".format(
