@@ -1,5 +1,5 @@
 import unittest
-from utils import percentile as my_percentile
+from utils import percentile
 
 
 class TestPercentile(unittest.TestCase):
@@ -22,6 +22,6 @@ class TestPercentile(unittest.TestCase):
 
     def test_my_percentile_is_equal_to_numpy_percentile(self):
         self.assertEqual(
-            my_percentile(self.work_time, .95),
+            percentile(self.work_time, .95),
             2081998
         )

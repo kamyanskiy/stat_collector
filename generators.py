@@ -18,32 +18,28 @@ def field_map(dictsequence, name, func):
             d[name] = func(d[name])
         yield d
 
-def gen_lines_to_dictionaries(lines):
-    colnames = ('event_time', 'frontend_id', 'event_type', 'replica_group',
-                'additional_info')
-
-
+def gen_lines_to_dicts(lines):
+    colnames = ('timestamp', 'call_id', 'event_type', 'rpl_group', 'info')
     log = (dict(izip_longest(colnames, line.rsplit("\t"))) for line in lines)
-    log = field_map(log,"event_time", float)
-    log = field_map(log,"frontend_id", int)
-    log = field_map(log,"replica_group", int)
-    log = field_map(log,"additional_info", _parse_backend_name)
+    log = field_map(log,"timestamp", float)
+    log = field_map(log,"call_id", int)
+    log = field_map(log,"rpl_group", int)
+    log = field_map(log,"info", _parse_backend_name)
     return log
 
-def gen_frontend_ids(log):
+def gen_unique_call_ids_list(log):
     unique_ids = set()
     for item in log:
-        if item['frontend_id'] not in unique_ids:
-            unique_ids.add(item['frontend_id'])
+        if item['call_id'] not in unique_ids:
+            unique_ids.add(item['call_id'])
     return unique_ids
 
 def get_log(filename):
-    loglines = gen_lines_from_file(filename)
-    return gen_lines_to_dictionaries(loglines)
+    return gen_lines_to_dicts(gen_lines_from_file(filename))
 
-def gen_filter_by_frontend_id(log, frontend_id):
-    return (item for item in log if item['frontend_id'] == frontend_id)
+def gen_all_events_by_call_id(log, call_id):
+    return (item for item in log if item['call_id'] == call_id)
 
-def gen_timestamps_by_frontend_id(log, frontend_id):
-    for item in gen_filter_by_frontend_id(log, frontend_id):
-        yield int(item['event_time'])
+def gen_timestamps_by_call_id(log, call_id):
+    for item in gen_all_events_by_call_id(log, call_id):
+        yield int(item['call_id'])
